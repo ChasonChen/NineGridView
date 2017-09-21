@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 15
+        versionCode 1
+        versionName "1.0.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-annotations:25.3.1'
+}
+
+task clearJar(type: Delete) {
+    delete 'build/libs/ninegridview.jar'//如果打过一次包，删除重新打包
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/bundles/debug/') //待打包文件路径，其实是该路径下的classes.jar
+    into('build/libs/')  //打包成功后文件存放路径
+    include('classes.jar')
+    rename ('classes.jar', 'ninegridview.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
